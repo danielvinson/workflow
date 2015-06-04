@@ -36,6 +36,7 @@ window.onload = function() {
 }
 
 function getLocation(id){
+  console.log("Location of: "+id+" is "+id.getBoundingClientRect());
   return id.getBoundingClientRect();
 }
 
@@ -53,34 +54,34 @@ function connectElements(startElement, endElement, connectionPoint1, connectionP
   var loc2 = getLocation(endElement);
 
   // Create a box containing the area between the elements
-  var x = loc1.x+loc1.width;
-  var y = loc1.y;
-  var width = loc2.x - x;
-  var height = loc1.height + loc2.height + (loc2.y - (loc1.y + loc1.height));
+  var x = loc1.left+loc1.width;
+  var y = loc1.top;
+  var width = loc2.left - x;
+  var height = loc1.height + loc2.height + (loc2.top - (loc1.top + loc1.height));
 
   // Calculate connector points
   if (connectionPoint1 == 'left'){
-    var start = {'x': loc1.x,'y': loc1.y + (loc1.height / 2)};
+    var start = {'x': loc1.left,'y': loc1.top + (loc1.height / 2)};
   } else if (connectionPoint1 == 'right'){
     var start = {'x': x,'y': y + (loc1.height / 2)};
   } else if (connectionPoint1 == 'top'){
-    var start = {'x': loc1.x + (loc1.width / 2),'y': loc1.y};
+    var start = {'x': loc1.left + (loc1.width / 2),'y': loc1.top};
   } else if (connectionPoint1 == 'bottom'){
-    var start = {'x': loc1.x + (loc1.width / 2),'y': loc1.y + loc1.height};
+    var start = {'x': loc1.left + (loc1.width / 2),'y': loc1.top + loc1.height};
   } else if (connectionPoint1 == 'center'){
-    var start = {'x': loc1.x + (loc1.width / 2),'y': loc1.y + (loc1.height / 2)};
+    var start = {'x': loc1.left + (loc1.width / 2),'y': loc1.top + (loc1.height / 2)};
   }
 
   if (connectionPoint2 == 'left'){
-    var end = {'x': x + width,'y': loc2.y + (loc2.height / 2)};
+    var end = {'x': x + width,'y': loc2.top + (loc2.height / 2)};
   } else if (connectionPoint2 == 'right'){
-    var end = {'x': (loc2.x + loc2.width),'y': loc2.y + (loc2.height / 2)};
+    var end = {'x': loc2.left + loc2.width,'y': loc2.top + (loc2.height / 2)};
   } else if (connectionPoint2 == 'top'){
-    var end = {'x': loc2.x + (loc2.width / 2),'y': loc2.y};
+    var end = {'x': loc2.left + (loc2.width / 2),'y': loc2.top};
   } else if (connectionPoint2 == 'bottom'){
-    var end = {'x': loc2.x + (loc2.width / 2),'y': loc2.y + loc2.height};
+    var end = {'x': loc2.left + (loc2.width / 2),'y': loc2.top + loc2.height};
   } else if (connectionPoint2 == 'center'){
-    var end = {'x': loc2.x + (loc2.width / 2),'y': loc2.y + (loc2.height / 2)};
+    var end = {'x': loc2.left + (loc2.width / 2),'y': loc2.top + (loc2.height / 2)};
   }
 
   // Add the Arrow
@@ -134,16 +135,12 @@ function drawArrow(startPosition, endPosition, orientation, numberOfCurves, time
 
   if (numberOfCurves == 0){
     var finalPathString = "M"+sxy+" "+"Q"+exy+" "+exy;
-    var finalTransform = Raphael.transformPath(finalPathString);
     path.animate({path: finalTransform}, 600, callback);
   }
 
   if (numberOfCurves == 1){
     var controlPoint1 = ex+","+sy;
-    var transformStep1 = "M"+sxy+" "+"Q"+controlPoint1;
     var finalPathString = "M"+sxy+" "+"Q"+controlPoint1+" "+exy;
-    var transform1 = Raphael.transformPath(transformStep1);
-    var finalTransform = Raphael.transformPath(finalPathString);
 
     animatePath(paper, finalPathString, time, path.attr, callback);
   }
@@ -151,12 +148,7 @@ function drawArrow(startPosition, endPosition, orientation, numberOfCurves, time
   if (numberOfCurves == 2){
     var controlPoint1 = ex+","+sy;
     var controlPoint2 = sx+","+ey;
-    var transformStep1 = "M"+sxy+" "+"C"+controlPoint1+" "+controlPoint1+" "+controlPoint1;
-    var transformStep2 = "M"+sxy+" "+"C"+controlPoint1+" "+controlPoint2+" "+controlPoint2;
     var finalPathString = "M"+sxy+" "+"C"+controlPoint1+" "+controlPoint2+" "+exy;
-    var transform1 = Raphael.transformPath(transformStep1);
-    var transform2 = Raphael.transformPath(transformStep2);
-    var finalTransform = Raphael.transformPath(finalPathString);
     
     animatePath(paper, finalPathString, time, path.attr, callback);
   }
@@ -169,7 +161,7 @@ function animatePath( canvas, pathstr, duration, attr, callback )
   var total_length = guide_path.getTotalLength( guide_path );
   var last_point = guide_path.getPointAtLength(0);
   var start_time = new Date().getTime();
-  var interval_length = 50;
+  var interval_length = 1;
   var result = path;
 
   var interval_id = setInterval( function()
