@@ -16,7 +16,11 @@ window.onload = function() {
             $('#test232').animate({'opacity':'1'}, 500);
           });
           connectElements(test23, test233, '6','4',500,function(){
-            $('#test233').animate({'opacity':'1'}, 500);
+            $('#test233').animate({'opacity':'1'}, 500, function(){
+              connectElements(test233, test6, '7', '7', 1000, function(){
+                connectElements(test6, test7, '9','1', 1000);
+              });
+            });
           });
         });
       });
