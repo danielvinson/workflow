@@ -28,10 +28,11 @@ Change any standard SVG attribute for the arrow.
 #### makeConnector(node1, node2, connectingPoint1, connectingPoint2)
 Makes the arrow into a connector between any two DOM elements.
 The location grid system is the same layout as a keypad:
+```
 7 8 9
 4 5 6
 1 2 3
-
+```
 #### draw(callback)
 Draws the arrow, then calls the callback function after the animation is finished.
 
