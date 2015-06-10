@@ -40,5 +40,8 @@ Example usage:
 ```
 var arrow = new Arrow();
 arrow.makeConnector(test1, test2, '6','4');
+arrow.options.animation.time = 500;
+arrow.options.attr['arrow-start'] = 'classic-wide-long';
+arrow.options.attr['stroke-width'] = '3px';
 arrow.draw();
 ```
