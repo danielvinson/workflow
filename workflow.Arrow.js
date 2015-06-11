@@ -1,6 +1,6 @@
-function Arrow(){
+function Arrow(options) {
 
-  this.options = {
+  this.defaults = {
     'startPosition': {},
     'endPosition': {},
     'numberOfCurves': 2,
@@ -16,9 +16,32 @@ function Arrow(){
       'stroke-width': '2px',
       'overflow': 'visible',
     }
-  };
+  }
 
-  this.makeConnector = function(node1, node2, connectingPoint1, connectingPoint2){
+  // If no options are specified, use the defaults.
+  // If options are provided, merge defaults in without overwriting at 1 level of recursion.
+  // If a third level of options is ever possible, this will be better as a recursive merge function
+  // This could be simplified by using jQuery $.extend() or something, but its not worth the requirement.
+  if (!options) {
+    this.options = this.defaults;
+  } else {
+    this.options = options;
+    for (option in this.defaults) {
+      if (option instanceof Object) {
+        for (subOption in option) {
+          if (!this.options[option][subOption]) {
+            this.options[option][subOption] = option[subOption];
+          }
+        }
+      } else {
+        if (!this.options[option]) {
+          this.options[option] = this.defaults[option];
+        }
+      }
+    }
+  }
+
+  this.makeConnector = function(node1, node2, connectingPoint1, connectingPoint2) {
     // Makes the arrow into a connector between any two DOM elements.
     // The location grid system is the same layout as a keypad:
     // 7 8 9
@@ -29,9 +52,9 @@ function Arrow(){
     var loc1 = node1.getBoundingClientRect();
     var loc2 = node2.getBoundingClientRect();
     var start, end;
-    
+
     // Calculate connector points
-    
+
     // Start...
     if (connectingPoint1 == '1') {
       start = {
@@ -130,13 +153,12 @@ function Arrow(){
 
     this.options.startPosition = start;
     this.options.endPosition = end;
-    console.log([start, end]);
     return [start, end];
   }
 
-  this.draw = function(callback){
+  this.draw = function(callback) {
 
-    if (!callback) callback = function(){};
+    if (!callback) callback = function() {};
 
     options = this.options;
 
@@ -148,13 +170,13 @@ function Arrow(){
     document.body.appendChild(arrowContainer);
 
     // Raphael markers go beyond the SVG element, so padding is needed
-    if (options.attr['arrow-start'] != 'none'){
+    if (options.attr['arrow-start'] != 'none') {
       sx = options.startPosition.x + (parseInt(options.attr['stroke-width']) * 2);
     } else {
       sx = options.startPosition.x;
     }
     sy = options.startPosition.y;
-    if (options.attr['arrow-end'] != 'none'){
+    if (options.attr['arrow-end'] != 'none') {
       ex = options.endPosition.x - (parseInt(options.attr['stroke-width']) * 2);
     } else {
       ex = options.endPosition.x;
@@ -164,31 +186,31 @@ function Arrow(){
     exy = ex + "," + ey;
 
     // Create Raphael canvas
-    var width = Math.max(ex,sx) + 15; // 15 px padding to make sure nothing is clipped
-    var height = Math.max(ey,sy) + 15;
+    var width = Math.max(ex, sx) + 15; // 15 px padding to make sure nothing is clipped
+    var height = Math.max(ey, sy) + 15;
     var paper = new Raphael(arrowContainer, width, height);
 
     // Create the path
-    var path = paper.path("M"+sxy);
+    var path = paper.path("M" + sxy);
     path.attr(options.attr);
 
-    if (options.numberOfCurves == 0){
-      var finalPathString = "M"+sxy+" "+"Q"+exy+" "+exy;
+    if (options.numberOfCurves == 0) {
+      var finalPathString = "M" + sxy + " " + "Q" + exy + " " + exy;
       progressiveDraw(paper, finalPathString, options.animation.time, options.attr, callback);
     }
 
-    if (options.numberOfCurves == 1){
-      var controlPoint1 = ex+","+sy;
-      var finalPathString = "M"+sxy+" "+"Q"+controlPoint1+" "+exy;
+    if (options.numberOfCurves == 1) {
+      var controlPoint1 = ex + "," + sy;
+      var finalPathString = "M" + sxy + " " + "Q" + controlPoint1 + " " + exy;
 
       progressiveDraw(paper, finalPathString, options.animation.time, options.attr, callback);
     }
 
-    if (options.numberOfCurves == 2){
-      var controlPoint1 = ex+","+sy;
-      var controlPoint2 = sx+","+ey;
-      var finalPathString = "M"+sxy+" "+"C"+controlPoint1+" "+controlPoint2+" "+exy;
-      
+    if (options.numberOfCurves == 2) {
+      var controlPoint1 = ex + "," + sy;
+      var controlPoint2 = sx + "," + ey;
+      var finalPathString = "M" + sxy + " " + "C" + controlPoint1 + " " + controlPoint2 + " " + exy;
+
       progressiveDraw(paper, finalPathString, options.animation.time, options.attr, callback);
     }
 
@@ -206,15 +228,15 @@ function Arrow(){
       var result = path;
 
       var interval_id = setInterval(function() {
-      var elapsed_time = new Date().getTime() - start_time;
-      var this_length = elapsed_time / duration * total_length;
-      var subpathstr = guide_path.getSubpath(0, this_length);
-      attr.path = subpathstr;
+        var elapsed_time = new Date().getTime() - start_time;
+        var this_length = elapsed_time / duration * total_length;
+        var subpathstr = guide_path.getSubpath(0, this_length);
+        attr.path = subpathstr;
 
-      path.animate(attr, interval_length);
-      if (elapsed_time >= duration) {
-        clearInterval(interval_id);
-        if (callback != undefined) callback();
+        path.animate(attr, interval_length);
+        if (elapsed_time >= duration) {
+          clearInterval(interval_id);
+          if (callback != undefined) callback();
           guide_path.remove();
         }
       }, interval_length);

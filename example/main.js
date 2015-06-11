@@ -36,3 +36,18 @@ window.onload = function() {
     $('#test5').animate({'opacity':'1'}, 500);
   });
 }
+
+function connectElements(startElement, endElement, connectionPoint1, connectionPoint2, time, callback) {
+  // Create the Arrow
+  var options = {
+    'numberOfCurves': 2,
+    'animation': {
+      'time': time,
+    },
+    'orientation': 'leftToRight'
+  };
+
+  var arrow = new Arrow(options);
+  arrow.makeConnector(startElement, endElement, connectionPoint1,connectionPoint2);
+  arrow.draw(callback);
+}
