@@ -18,25 +18,20 @@ function Arrow(options) {
     }
   }
 
-  // If no options are specified, use the defaults.
   // If options are provided, merge defaults in without overwriting at 1 level of recursion.
   // If a third level of options is ever possible, this will be better as a recursive merge function
   // This could be simplified by using jQuery $.extend() or something, but its not worth the requirement.
-  if (!options) {
-    this.options = this.defaults;
-  } else {
-    this.options = options;
-    for (option in this.defaults) {
-      if (option instanceof Object) {
-        for (subOption in option) {
-          if (!this.options[option][subOption]) {
-            this.options[option][subOption] = option[subOption];
-          }
+  if (options){this.options = options;} else {this.options = {};}
+  for (option in this.defaults) {
+    if (option instanceof Object) {
+      for (subOption in option) {
+        if (!this.options[option][subOption]) {
+          this.options[option][subOption] = option[subOption];
         }
-      } else {
-        if (!this.options[option]) {
-          this.options[option] = this.defaults[option];
-        }
+      }
+    } else {
+      if (!this.options[option]) {
+        this.options[option] = this.defaults[option];
       }
     }
   }
@@ -194,28 +189,27 @@ function Arrow(options) {
     var path = paper.path("M" + sxy);
     path.attr(options.attr);
 
+    var controlPoint1 = ex + "," + sy;
+    var controlPoint2 = sx + "," + ey;
+
     if (options.numberOfCurves == 0) {
-      var finalPathString = "M" + sxy + " " + "Q" + exy + " " + exy;
-      progressiveDraw(paper, finalPathString, options.animation.time, options.attr, callback);
+      var pathString = "M" + sxy + " " + "Q" + exy + " " + exy;
     }
-
     if (options.numberOfCurves == 1) {
-      var controlPoint1 = ex + "," + sy;
-      var finalPathString = "M" + sxy + " " + "Q" + controlPoint1 + " " + exy;
-
-      progressiveDraw(paper, finalPathString, options.animation.time, options.attr, callback);
+      var pathString = "M" + sxy + " " + "Q" + controlPoint1 + " " + exy;
     }
-
     if (options.numberOfCurves == 2) {
-      var controlPoint1 = ex + "," + sy;
-      var controlPoint2 = sx + "," + ey;
-      var finalPathString = "M" + sxy + " " + "C" + controlPoint1 + " " + controlPoint2 + " " + exy;
-
-      progressiveDraw(paper, finalPathString, options.animation.time, options.attr, callback);
+      var pathString = "M" + sxy + " " + "C" + controlPoint1 + " " + controlPoint2 + " " + exy;
     }
 
+    // Other animation options TBD
+    if (options.animation.type = 'progressive'){
+      progressiveDraw(paper, pathString, options.animation.time, options.attr, callback);
+    }
+    
     function progressiveDraw(canvas, pathstr, duration, attr, callback) {
       // From http://stackoverflow.com/questions/4631019/how-to-draw-a-vector-path-progressively-raphael-js
+      // This will break the line into small pieces and draw them one by one.
       var guide_path = canvas.path(pathstr).attr({
         stroke: "none",
         fill: "none"
@@ -242,5 +236,7 @@ function Arrow(options) {
       }, interval_length);
       return result;
     }
+
+
   }
 }

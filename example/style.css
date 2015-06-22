@@ -9,8 +9,19 @@ div.flowBlock
   border: 1px solid black;
 }
 
+#flow
+{
+  display: block;
+}
+
+#flow2
+{
+  display: block;
+}
+
 #test1
 {
+  opacity: 0;
   left: 10px;
   top: 10px;
 }
@@ -80,13 +91,13 @@ div.flowBlock
 }
 #test6
 {
-  opacity: 1;
+  opacity: 0;
   left: 600px;
   top: 100px;
 }
 #test7
 {
-  opacity: 1;
+  opacity: 0;
   left: 800px;
   top: 240px;
 }
