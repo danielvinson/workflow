@@ -1,6 +1,18 @@
 # workflow
 Flowcharts using Raphael.js
 
+
+
+Project named workflow until I figure out a real name.
+
+I started this project after spending a very long time making an interactive flowchart for a different project and being frustrated at how hard it was to do something that should be simple.
+
+The goal is two steps:
+* Create a javascript library which will handle all of the hard parts - the hardest parts being SVG paths to connect elements gracefully and animations between SVG elements.
+* Use a file called *.flow which will define in plain text the exact type of chart that the user would like.  This can be added to a page with one line of javascript.
+
+Currently this project is about 50% completed, which the schema parser being the final major component to be added.
+
 Example: http://ec2-52-8-148-38.us-west-1.compute.amazonaws.com/flow/example/index.html
 
 ## Arrow
