@@ -1,12 +1,12 @@
 window.onload = function() {
 
-  for (var i = 0; i < 150; i++){
+  for (var i = 0; i < 300; i++){
     var node = new Node();
     node.options.location = 'flow2';
     node.options.style.width = '25px';
     node.options.style.height = '25px';
-    node.options.style.left = (i * 5) + 'px';
-    node.options.style.top = (i * 2) + 'px';
+    node.options.style.left = (i * (Math.random()*4)) + 'px';
+    node.options.style.top = (i * (Math.random()*3)) + 'px';
     node.options.style.background = 'none';
     node.options.style.border = 'none';
     node.options.class = 'flowBlock';
@@ -14,7 +14,7 @@ window.onload = function() {
     node.draw();
 
     var options = {
-      'numberOfCurves': 0,
+      'numberOfCurves': 2,
       'animation': {
         'time': 1000,
       },

@@ -18,23 +18,7 @@ function Arrow(options) {
     }
   }
 
-  // If options are provided, merge defaults in without overwriting at 1 level of recursion.
-  // If a third level of options is ever possible, this will be better as a recursive merge function
-  // This could be simplified by using jQuery $.extend() or something, but its not worth the requirement.
-  if (options){this.options = options;} else {this.options = {};}
-  for (option in this.defaults) {
-    if (option instanceof Object) {
-      for (subOption in option) {
-        if (!this.options[option][subOption]) {
-          this.options[option][subOption] = option[subOption];
-        }
-      }
-    } else {
-      if (!this.options[option]) {
-        this.options[option] = this.defaults[option];
-      }
-    }
-  }
+  this.options = $.extend(true, {}, this.defaults, options);
 
   this.makeConnector = function(node1, node2, connectingPoint1, connectingPoint2) {
     // Makes the arrow into a connector between any two DOM elements.
@@ -185,10 +169,6 @@ function Arrow(options) {
     var height = Math.max(ey, sy) + 15;
     var paper = new Raphael(arrowContainer, width, height);
 
-    // Create the path
-    var path = paper.path("M" + sxy);
-    path.attr(options.attr);
-
     var controlPoint1 = ex + "," + sy;
     var controlPoint2 = sx + "," + ey;
 
@@ -203,10 +183,15 @@ function Arrow(options) {
     }
 
     // Other animation options TBD
-    if (options.animation.type = 'progressive'){
+    if (options.animation.type == 'progressive'){
       progressiveDraw(paper, pathString, options.animation.time, options.attr, callback);
+    } else {
+      // No Animation
+      var path = paper.path(pathString);
+      path.attr(options.attr);
+      if (callback != undefined) callback();
     }
-    
+
     function progressiveDraw(canvas, pathstr, duration, attr, callback) {
       // From http://stackoverflow.com/questions/4631019/how-to-draw-a-vector-path-progressively-raphael-js
       // This will break the line into small pieces and draw them one by one.
@@ -236,7 +221,5 @@ function Arrow(options) {
       }, interval_length);
       return result;
     }
-
-
   }
 }
